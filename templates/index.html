@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Storage Boxes</title>
+</head>
+<body>
+<h1>Storage Boxes</h1>
+
+<form action="/add" method="post">
+    <input name="name" placeholder="Box name" required>
+    <input name="description" placeholder="Description">
+    <button type="submit">Add Box</button>
+</form>
+
+<ul>
+{% for box in boxes %}
+  <li>
+    <a href="{{ url_for('box_detail', box_id=box['id']) }}">
+      {{ box['name'] }} - {{ box['description'] }}
+    </a>
+  </li>
+{% endfor %}
+</ul>
+</body>
+</html>

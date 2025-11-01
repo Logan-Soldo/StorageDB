@@ -1,3 +1,13 @@
+'''
+Written by Logan Soldo on 2024-06-15
+
+Simple Storage Box Management Web App with QR Code Integration
+
+This Flask application allows users to manage storage boxes and their contents.
+Each box can be assigned a QR code that links to its contents for easy access.
+Added functionality to edit box name and description.
+'''
+
 import sqlite3
 import qrcode
 import os
@@ -34,6 +44,7 @@ def init_db():
     conn.close()
 
 def get_db():
+    ''' Connect to the database '''
     return sqlite3.connect(DB)
 
 # --- Helper: Generate QR ---
@@ -71,12 +82,25 @@ def add_box():
 def view_box(box_id):
     conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT box_name, description FROM boxes WHERE id=?", (box_id,))
+    c.execute("SELECT id, box_name, description FROM boxes WHERE id=?", (box_id,))
     box = c.fetchone()
     c.execute("SELECT * FROM items WHERE box_id=?", (box_id,))
     items = c.fetchall()
     conn.close()
     return render_template("box.html", box_id=box_id, box=box, items=items)
+
+@app.route("/update_box/<int:box_id>", methods=["POST"])
+def update_box(box_id):
+    new_name = request.form["box_name"]
+    new_description = request.form.get("description", "")
+    conn = get_db()
+    conn.execute("UPDATE boxes SET box_name=?, description=? WHERE id=?",
+                 (new_name, new_description, box_id))
+    conn.commit()
+    conn.close()
+    # Regenerate QR code using current host IP
+    generate_qr(box_id, ip_address=request.host.split(":")[0])
+    return redirect(url_for("view_box", box_id=box_id))
 
 @app.route("/box/<int:box_id>/add_item", methods=["POST"])
 def add_item(box_id):

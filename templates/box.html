@@ -1,8 +1,22 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2 class="text-2xl font-semibold mb-2">{{ box[0] }}</h2>
-<p class="mb-4">{{ box[1] }}</p>
+<!-- Box Info -->
+<h2 class="text-2xl font-semibold mb-2">{{ box[1] }}</h2>
+<p class="mb-4">{{ box[2] }}</p>
 
+<!-- QR Code Display -->
+<h3 class="font-semibold mb-1">QR Code:</h3>
+<img src="{{ url_for('static', filename='qr/box_' ~ box[0] ~ '.png') }}" alt="QR Code" class="mb-4 w-32 h-32">
+
+<!-- Edit Box Name / Description Form -->
+<h3 class="font-semibold mb-1">Edit Box Info:</h3>
+<form method="POST" action="{{ url_for('update_box', box_id=box[0]) }}" class="flex flex-col gap-2 mb-4">
+  <input type="text" name="box_name" value="{{ box[1] }}" class="border p-2" required>
+  <textarea name="description" class="border p-2">{{ box[2] }}</textarea>
+  <button class="bg-blue-500 text-white p-2 rounded">Save Changes</button>
+</form>
+
+<!-- Items List -->
 <h3 class="font-semibold mb-1">Items:</h3>
 <ul>
 {% for item in items %}
@@ -16,6 +30,7 @@
 {% endfor %}
 </ul>
 
+<!-- Add New Item Form -->
 <form method="POST" action="{{ url_for('add_item', box_id=box_id) }}" class="mt-4 flex flex-col gap-2">
   <input name="item_name" placeholder="Item name" class="border p-2" required>
   <input name="quantity" type="number" value="1" class="border p-2" min="1">

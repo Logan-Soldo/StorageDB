@@ -11,9 +11,11 @@ Added functionality to edit box name and description.
 import sqlite3
 import qrcode
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
+# Secret key required for flash messages
+app.secret_key = os.urandom(24)
 
 DB = "storage.db"
 QR_DIR = "static/qr"
@@ -98,8 +100,8 @@ def update_box(box_id):
                  (new_name, new_description, box_id))
     conn.commit()
     conn.close()
-    # Regenerate QR code using current host IP
     generate_qr(box_id, ip_address=request.host.split(":")[0])
+    flash("Box updated successfully!", "success")  # <-- flash message
     return redirect(url_for("view_box", box_id=box_id))
 
 @app.route("/box/<int:box_id>/add_item", methods=["POST"])

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="{{ url_for('add_box') }}" class="mb-6 flex gap-2">
+  <input name="box_name" placeholder="New Box Name" class="border p-2 flex-1" required>
+  <input name="description" placeholder="Description" class="border p-2 flex-1">
+  <button class="bg-blue-500 text-white px-4 rounded">Add Box</button>
+</form>
+
+<ul>
+{% for box in boxes %}
+  <li class="bg-white shadow p-3 mb-2 rounded">
+    <a href="{{ url_for('view_box', box_id=box[0]) }}" class="font-semibold">{{ box[1] }}</a>
+    <p class="text-sm">{{ box[2] }}</p>
+    <img src="{{ url_for('static', filename='qr/box_' ~ box[0] ~ '.png') }}" width="80">
+  </li>
+{% endfor %}
+</ul>
+{% endblock %}

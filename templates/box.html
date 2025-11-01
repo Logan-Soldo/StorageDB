@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-2">{{ box[0] }}</h2>
+<p class="mb-4">{{ box[1] }}</p>
+
+<h3 class="font-semibold mb-1">Items:</h3>
+<ul>
+{% for item in items %}
+  <li class="flex justify-between bg-white p-2 mb-1 rounded">
+    <span>{{ item[2] }} (x{{ item[3] }})</span>
+    <span>
+      <a href="{{ url_for('edit_item', item_id=item[0]) }}" class="text-blue-500 mr-2">Edit</a>
+      <a href="{{ url_for('delete_item', item_id=item[0], box_id=box_id) }}" class="text-red-500">Delete</a>
+    </span>
+  </li>
+{% endfor %}
+</ul>
+
+<form method="POST" action="{{ url_for('add_item', box_id=box_id) }}" class="mt-4 flex flex-col gap-2">
+  <input name="item_name" placeholder="Item name" class="border p-2" required>
+  <input name="quantity" type="number" value="1" class="border p-2" min="1">
+  <textarea name="notes" placeholder="Notes (optional)" class="border p-2"></textarea>
+  <button class="bg-green-500 text-white p-2 rounded">Add Item</button>
+</form>
+
+<a href="{{ url_for('list_boxes') }}" class="text-gray-600 block mt-4">← Back to Boxes</a>
+{% endblock %}

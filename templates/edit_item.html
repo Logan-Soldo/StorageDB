@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-2">Edit Item</h2>
+<form method="POST" class="flex flex-col gap-2">
+  <input type="hidden" name="box_id" value="{{ item[1] }}">
+  <input name="item_name" value="{{ item[2] }}" class="border p-2" required>
+  <input name="quantity" type="number" value="{{ item[3] }}" class="border p-2" min="1">
+  <textarea name="notes" class="border p-2">{{ item[4] }}</textarea>
+  <button class="bg-blue-500 text-white p-2 rounded">Save Changes</button>
+</form>
+{% endblock %}

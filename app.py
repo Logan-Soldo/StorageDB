@@ -12,10 +12,13 @@ import sqlite3
 import qrcode
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
 # Secret key required for flash messages
-app.secret_key = os.urandom(24)
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 DB = "storage.db"
 QR_DIR = "static/qr"

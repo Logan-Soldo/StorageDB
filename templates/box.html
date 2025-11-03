@@ -1,51 +1,72 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<!-- Box Info -->
-<h2 class="text-2xl font-semibold mb-2">{{ box[1] }}</h2>
-<p class="mb-4">{{ box[2] }}</p>
+<!-- Box Header: Name, Description, Tags, Edit/Delete buttons -->
+<div class="flex justify-between items-start mb-4">
+  <div>
+    <h2 class="text-2xl font-semibold">{{ box['box_name'] }}</h2>
+    <p class="text-gray-400">{{ box['description'] or 'No description yet.' }}</p>
 
-<!-- QR Code Display -->
-<h3 class="font-semibold mb-1">QR Code:</h3>
-<img src="{{ url_for('static', filename='qr/box_' ~ box[0] ~ '.png') }}" 
-     alt="QR Code" class="mb-4 w-32 h-32">
+    <!-- Tags as pills -->
+    {% if box['tags'] %}
+      <div class="flex flex-wrap gap-2 mt-2">
+        {% for tag in box['tags'].split(',') %}
+          <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
 
-<!-- Edit Box Name / Description Form -->
-<h3 class="font-semibold mb-1">Edit Box Info:</h3>
-<form method="POST" action="{{ url_for('update_box', box_id=box[0]) }}"
-      onsubmit="return confirm('Are you sure you want to save these changes?');"
-      class="flex flex-col gap-2 mb-4">
-  <input type="text" name="box_name" value="{{ box[1] }}" class="border p-2" required>
-  <textarea name="description" class="border p-2">{{ box[2] }}</textarea>
-  <button class="bg-blue-500 text-white p-2 rounded">Save Changes</button>
-</form>
+    <!-- Duration -->
+    {% if box['duration'] %}
+      <p class="text-sm text-gray-400 mt-1">Duration: {{ box['duration']|capitalize }}</p>
+    {% endif %}
+  </div>
+
+  <div class="flex gap-2">
+    <!-- Edit Box -->
+    <a href="{{ url_for('edit_box', box_id=box['id']) }}" 
+       class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded">
+       Edit Box
+    </a>
+
+    <!-- Delete Box -->
+    <form method="POST" action="{{ url_for('delete_box', box_id=box['id']) }}" 
+          onsubmit="return confirm('Are you sure you want to delete this box?');">
+      <button class="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded">
+        Delete
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- QR Code -->
+<div class="mb-6">
+  <img src="{{ url_for('static', filename='qr/box_' ~ box['id'] ~ '.png') }}" 
+       alt="QR Code" class="w-32 h-32 border border-gray-700 rounded">
+</div>
 
 <!-- Items List -->
-<h3 class="font-semibold mb-1">Items:</h3>
+<h3 class="font-semibold mb-2 text-xl">📦 Items:</h3>
 <ul>
-{% for item in items %}
-  <li class="flex justify-between bg-white p-2 mb-1 rounded">
-    <span>{{ item[2] }} (x{{ item[3] }})</span>
-    <span>
-      <a href="{{ url_for('edit_item', item_id=item[0]) }}" class="text-blue-500 mr-2">Edit</a>
-      <a href="{{ url_for('delete_item', item_id=item[0], box_id=box[0]) }}" 
-         onclick="return confirm('Are you sure you want to delete this item?');"
-         class="text-red-500">Delete</a>
-    </span>
-  </li>
-{% endfor %}
+  {% for item in items %}
+    <li class="flex justify-between bg-gray-800 p-2 mb-1 rounded">
+      <span>{{ item['item_name'] }} (x{{ item['quantity'] }})</span>
+      <span>
+        <a href="{{ url_for('edit_item', item_id=item['id']) }}" class="text-blue-400 hover:text-blue-300 mr-2">Edit</a>
+        <a href="{{ url_for('delete_item', item_id=item['id'], box_id=box['id']) }}" class="text-red-400 hover:text-red-300">Delete</a>
+      </span>
+    </li>
+  {% endfor %}
 </ul>
 
-<!-- Add New Item Form -->
-<h3 class="font-semibold mb-1 mt-4">Add New Item:</h3>
-<form method="POST" action="{{ url_for('add_item', box_id=box[0]) }}" 
-      class="flex flex-col gap-2">
-  <input name="item_name" placeholder="Item name" class="border p-2" required>
-  <input name="quantity" type="number" value="1" class="border p-2" min="1">
-  <textarea name="notes" placeholder="Notes (optional)" class="border p-2"></textarea>
-  <button class="bg-green-500 text-white p-2 rounded">Add Item</button>
+<!-- Add Item Form -->
+<form method="POST" action="{{ url_for('add_item', box_id=box['id']) }}" class="mt-6 flex flex-col gap-2">
+  <input name="item_name" placeholder="Item name" class="p-2 rounded border border-gray-700 bg-gray-800 text-white" required>
+  <input name="quantity" type="number" value="1" min="1" class="p-2 rounded border border-gray-700 bg-gray-800 text-white">
+  <textarea name="notes" placeholder="Notes (optional)" class="p-2 rounded border border-gray-700 bg-gray-800 text-white"></textarea>
+  <button class="bg-green-600 hover:bg-green-500 text-white p-2 rounded">➕ Add Item</button>
 </form>
 
-<a href="{{ url_for('list_boxes') }}" class="text-gray-600 block mt-4">← Back to Boxes</a>
+<a href="{{ url_for('list_boxes') }}" class="text-gray-400 hover:text-gray-200 mt-6 inline-block">← Back to Boxes</a>
 
 {% endblock %}

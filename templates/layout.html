@@ -2,28 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Storage Manager</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        input, textarea, select {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border: 1px solid #333;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        a {
+            color: #60a5fa;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+        }
+        .btn {
+            background-color: #2563eb;
+            color: white;
+        }
+        .btn:hover {
+            background-color: #1d4ed8;
+        }
+        .flash-success {
+            background-color: #22c55e;
+            color: white;
+        }
+        .flash-error {
+            background-color: #ef4444;
+            color: white;
+        }
+        .flash-info {
+            background-color: #3b82f6;
+            color: white;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-6">
+<body class="min-h-screen flex flex-col items-center py-8 px-4">
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="mb-4">
-          {% for category, message in messages %}
-            <div class="p-2 mb-2 rounded 
-                        {% if category == 'success' %}bg-green-200{% elif category == 'error' %}bg-red-200{% else %}bg-blue-200{% endif %}">
-              {{ message }}
+    <div class="w-full max-w-3xl">
+        <h1 class="text-3xl font-bold mb-6 text-center">📦 Storage Manager</h1>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="mb-4 space-y-2">
+              {% for category, message in messages %}
+                <div class="p-3 rounded flash-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
             </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+          {% endif %}
+        {% endwith %}
 
-    <!-- Main Content -->
-    <div class="container mx-auto">
-        {% block content %}{% endblock %}
+        <!-- Page content -->
+        <div class="card p-6 rounded-lg shadow-lg">
+            {% block content %}{% endblock %}
+        </div>
     </div>
 
 </body>

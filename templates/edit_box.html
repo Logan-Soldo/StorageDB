@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Edit Box</h2>
+
+<form method="POST" class="flex flex-col gap-4">
+  <input name="box_name" value="{{ box['box_name'] }}" class="p-2 rounded border bg-gray-800 text-white" required>
+  <textarea name="description" class="p-2 rounded border bg-gray-800 text-white">{{ box['description'] }}</textarea>
+
+  <label class="text-sm text-gray-300">Duration</label>
+  <select name="duration" class="p-2 rounded border bg-gray-800 text-white">
+    {% for option in ['long-term', 'short-term', 'seasonal'] %}
+      <option value="{{ option }}" {% if box['duration'] == option %}selected{% endif %}>{{ option|capitalize }}</option>
+    {% endfor %}
+  </select>
+
+  <label class="text-sm text-gray-300">Tags</label>
+  <div class="flex flex-wrap gap-3">
+    {% for tag in ['Kitchen','Tools','Clothes','Electronics','Documents','Misc'] %}
+      <label class="flex items-center gap-1">
+        <input type="checkbox" name="tags" value="{{ tag }}" 
+               {% if tag in (box['tags'] or '').split(',') %}checked{% endif %}
+               class="form-checkbox bg-gray-700 text-blue-500">
+        <span>{{ tag }}</span>
+      </label>
+    {% endfor %}
+  </div>
+
+  <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white py-2 rounded">Save Changes</button>
+</form>
+
+<a href="{{ url_for('view_box', box_id=box['id']) }}" class="text-gray-400 mt-4 inline-block">← Back to Box</a>
+{% endblock %}
